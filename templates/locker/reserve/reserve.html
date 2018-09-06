@@ -1,0 +1,108 @@
+{% extends '../../core/base.html' %}
+
+{% block content %}
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <h1>
+      Reservas
+    </h1>
+    <ol class="breadcrumb">
+      <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+      <li><a href="#">Examples</a></li>
+      <li class="active">Blank page</li>
+    </ol>
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+
+    <!-- Default box -->
+    <div class="box">
+      <div class="box-header with-border">
+        <h3 class="box-title">Projetor</h3>
+          <select name="projetor" id="erro">
+            <option value="" selected="">Escolha um projetor</option>
+            <option value="Interativo">Computador Interativo</option>
+            <option value="Datashow">Datashow</option>
+          </select>
+        </div>
+      <div class="box-body">
+          <!-- action="{% url 'locker:reserve-list' %}"-->
+          <form id="click" method="POST" onsubmit="return false;">
+              {% csrf_token %}
+              <table class="table table-hover table-bordered">
+                <thead>
+                    <tr class="success">
+                        <td class="text-center">Horário</td>
+                            <td class="text-center">Segunda ({{ days.0 }})</td>
+                            <td class="text-center">Terça ({{ days.1 }})</td>
+                            <td class="text-center">Quarta ({{ days.2 }})</td>
+                            <td class="text-center">Quinta ({{ days.3 }})</td>
+                            <td class="text-center">Sexta ({{ days.4 }})</td>
+                    </tr>
+                </thead>
+                <tbody class="checkbox-group required">
+                  {% for slot in slots %}
+                  <tr id="marcadores">
+                        <td class="text-center" style="vertical-align:middle"> {{ slot.name }}<br/>{{ slot.start }} - {{ slot.end }}</td>
+                        <td class="text-center" style="vertical-align:middle"> <input type="checkbox" name="{{ days.0 }}" value= {{ slot.pk }} onclick="pop()"> </td>
+                        <td class="text-center" style="vertical-align:middle"> <input type="checkbox" name="{{ days.1 }}" value= {{ slot.pk }} onclick="pop()"> </td>
+                        <td class="text-center" style="vertical-align:middle"> <input type="checkbox" name="{{ days.2 }}" value= {{ slot.pk }} onclick="pop()"> </td>
+                        <td class="text-center" style="vertical-align:middle"> <input type="checkbox" name="{{ days.3 }}" value= {{ slot.pk }} onclick="pop()"> </td>
+                        <td class="text-center" style="vertical-align:middle"> <input type="checkbox" name="{{ days.4 }}" value= {{ slot.pk }} onclick="pop()"> </td>
+                    </tr>
+                  {% endfor %}  
+                  </tbody>
+              </table>      
+
+              <button type="submit" class="btn btn-danger pull-right" id="Salvar" disabled >Salvar</button>
+              <script> 
+                function pop() {
+                  const button = document.getElementById("Salvar").disabled
+                  if(button){
+                    document.getElementById("Salvar").disabled = false
+                  }
+                  else {
+                    let markers = document.getElementsByTagName('input')
+                    let array = []
+                    let a = 0
+                    for (let index = 0; index < markers.length-1; index++) {
+                      if(markers[index].type == "checkbox"){
+                        array[a] = markers[index]
+                        a++
+                      }
+                    }
+                    let checked = false
+                    for (let index = 0; index < array.length-1; index++) {
+                      if(array[index].checked==true){
+                        checked = true
+                        break
+                      }
+                    }
+                    if(!checked){
+                      alert("Escolha pelo menos um horário!")
+                      document.getElementById("Salvar").disabled = true
+                    }
+                  }
+            
+                click.onsubmit = function success() {
+                  if(erro.value == ""){
+                      var vaiErro = new vaiDarErro();
+                      return false;
+                  } else alert("Sucesso!");
+                }
+                function vaiDarErro(){
+                    alert("Selecione um projetor");
+                }
+                  
+                }
+              </script>
+              <a href="{% url 'locker:reserve-list' %}" class="btn btn-default">Cancel</a>
+            </form>    
+      </div>
+    </div>
+    <!-- /.box -->
+
+  </section>
+  <!-- /.content -->
+{% endblock %}
